@@ -2,9 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import psycopg2
 
+# Setup local database connection
 def connect_to_db():
     return psycopg2.connect(host='localhost', database='NBA Data', user='postgres', password='aqwertyuiop', port='5432')
 
+# Query advanced team data and store into a dataframe
 def fetch_data():
     query = """
     SELECT AVG("PACE") as "Possessions per game",

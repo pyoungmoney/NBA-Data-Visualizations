@@ -38,7 +38,6 @@ def plot_data(df):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
     plt.savefig('PossessionsPerGame.png', bbox_inches='tight')
 
     # Plotting Points per Possession
@@ -52,7 +51,6 @@ def plot_data(df):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
     plt.savefig('PointsPerPossession.png', bbox_inches='tight')
 
     # Plotting Effective FG %
@@ -66,7 +64,6 @@ def plot_data(df):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
     plt.savefig('EffectiveFG.png', bbox_inches='tight')
 
     # Plotting True Shooting %
@@ -80,7 +77,6 @@ def plot_data(df):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
     plt.savefig('TrueShooting.png', bbox_inches='tight')
 
 

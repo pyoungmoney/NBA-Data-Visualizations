@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from unidecode import unidecode
 
 #Function for connecting to postgres SQL Database
 def connect_to_db():
@@ -9,7 +10,7 @@ def connect_to_db():
         host='localhost',
         database='NBA Data',
         user='postgres',
-        password='XXXX',
+        password='1234',
         port='5432'
     )
 
@@ -47,7 +48,18 @@ def infer_sql_type(pd_type):
         return 'TEXT'
     return 'TEXT'  # Default to TEXT for unexpected types
 
+def preprocess_dataframe(df):
+    """
+    Preprocess the dataframe to remove accent marks from player names
+    """
+    # Remove accent marks from player names
+    df['PLAYER_NAME'] = df['PLAYER_NAME'].apply(unidecode)
+    return df
+
 def insert_data(conn, df):
+    # Preprocess the dataframe before insertion
+    df = preprocess_dataframe(df)
+    
     cursor = conn.cursor()
     # Ensure column names are properly quoted to handle any special characters or cases
     columns = ', '.join([f'"{col}"' for col in df.columns])
@@ -62,7 +74,7 @@ def insert_data(conn, df):
 # Function to generate season strings and IDs
 def generate_seasons(start_year):
     seasons = []
-    for year in range(start_year, 2023):
+    for year in range(start_year, 2024):
         season = f"{year}-{str(year + 1)[-2:]}"
         season_id = year - start_year + 1
         seasons.append((season, season_id))
@@ -126,7 +138,7 @@ static_params = {
 conn = connect_to_db()
 table_created = False
 
-for season, season_id in generate_seasons(1996):
+for season, season_id in generate_seasons(2023):
     for season_type in ['Regular Season', 'Playoffs']:
         params = {**static_params, 'Season': season, 'SeasonType': season_type}
         response = requests.get(url, headers=headers, params=params)

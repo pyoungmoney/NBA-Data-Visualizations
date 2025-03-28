@@ -9,7 +9,7 @@ def connect_to_db():
         host='localhost',
         database='NBA Data',
         user='postgres',
-        password='XXXX',
+        password='1234',
         port='5432'
     )
 
@@ -62,7 +62,7 @@ def insert_data(conn, df):
 # Function to generate season strings and IDs
 def generate_seasons(start_year):
     seasons = []
-    for year in range(start_year, 2023):
+    for year in range(start_year, 2024):
         season = f"{year}-{str(year + 1)[-2:]}"
         season_id = year - start_year + 1
         seasons.append((season, season_id))
@@ -122,7 +122,7 @@ static_params = {
 conn = connect_to_db()
 table_created = False
 
-for season, season_id in generate_seasons(1996):
+for season, season_id in generate_seasons(2023):
     for season_type in ['Regular Season', 'Playoffs']:
         params = {**static_params, 'Season': season, 'SeasonType': season_type}
         response = requests.get(url, headers=headers, params=params)

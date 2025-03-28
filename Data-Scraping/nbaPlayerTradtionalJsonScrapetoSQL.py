@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from unidecode import unidecode
 
 #Function for connecting to postgres SQL Database
 def connect_to_db():
@@ -9,15 +10,22 @@ def connect_to_db():
         host='localhost',
         database='NBA Data',
         user='postgres',
-        password='aqwertyuiop',
+        password='1234',
         port='5432'
     )
 
 def create_table(conn, df):
     cursor = conn.cursor()
-    # Generate SQL column definitions based on DataFrame dtypes
-    columns = ",\n".join([f'"{col}" {infer_sql_type(df[col].dtype)}' for col in df.columns])
-    sql_command = f"""
+    # Check if the table already exists
+    cursor.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'Player Traditional Stats');")
+    if cursor.fetchone()[0]:
+        print("Table already exists. Skipping creation.")
+        return  # If table exists, skip the creation logic
+    # If the table does not exist, proceed with creation
+    else:
+        # Generate SQL column definitions based on DataFrame dtypes
+        columns = ",\n".join([f'"{col}" {infer_sql_type(df[col].dtype)}' for col in df.columns])
+        sql_command = f"""
         CREATE TABLE "Player Traditional Stats" (
             id SERIAL PRIMARY KEY,
             {columns}
@@ -38,7 +46,18 @@ def infer_sql_type(pd_type):
         return 'TEXT'
     return 'TEXT'  # Default to TEXT for unexpected types
 
+def preprocess_dataframe(df):
+    """
+    Preprocess the dataframe to remove accent marks from player names
+    """
+    # Remove accent marks from player names
+    df['PLAYER_NAME'] = df['PLAYER_NAME'].apply(unidecode)
+    return df
+
 def insert_data(conn, df):
+    # Preprocess the dataframe before insertion
+    df = preprocess_dataframe(df)
+    
     cursor = conn.cursor()
     # Ensure column names are properly quoted to handle any special characters or cases
     columns = ', '.join([f'"{col}"' for col in df.columns])
@@ -53,7 +72,7 @@ def insert_data(conn, df):
 # Function to generate season strings and IDs
 def generate_seasons(start_year):
     seasons = []
-    for year in range(start_year, 2023):
+    for year in range(start_year, 2024):
         season = f"{year}-{str(year + 1)[-2:]}"
         season_id = year - start_year + 1
         seasons.append((season, season_id))
@@ -117,7 +136,7 @@ static_params = {
 conn = connect_to_db()
 table_created = False
 
-for season, season_id in generate_seasons(1996):
+for season, season_id in generate_seasons(2023):
     for season_type in ['Regular Season', 'Playoffs']:
         params = {**static_params, 'Season': season, 'SeasonType': season_type}
         response = requests.get(url, headers=headers, params=params)

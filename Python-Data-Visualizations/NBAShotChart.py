@@ -16,7 +16,7 @@ mymap = mpb.cm.coolwarm
 
 # Setup local database connection
 def connect_to_db():
-    return psycopg2.connect(host='localhost', database='NBA Data', user='postgres', password='xxxx', port='5432')
+    return psycopg2.connect(host='localhost', database='NBA Data', user='postgres', password='1234', port='5432')
 
 # Query shot data and store into a dataframe
 def fetch_player_shot_data(player_name, season_id, season_type):

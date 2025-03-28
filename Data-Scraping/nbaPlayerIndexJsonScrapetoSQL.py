@@ -9,7 +9,7 @@ def connect_to_db():
         host='localhost',
         database='NBA Data',
         user='postgres',
-        password='XXXX',
+        password='1234',
         port='5432'
     )
 

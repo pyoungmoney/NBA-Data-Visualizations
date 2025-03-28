@@ -4,7 +4,7 @@ import pandas as pd
 # Function to generate season strings and IDs
 def generate_seasons(start_year):
     seasons = []
-    for year in range(start_year, 2023):  # Up to the 2022-23 season
+    for year in range(start_year, 2025):  # Up to the 2024-25 season
         season = f"{year}-{str(year + 1)[-2:]}"
         season_id = year - start_year + 1  # Calculate SeasonID
         seasons.append((season, season_id))
@@ -69,7 +69,7 @@ static_params = {
 all_data = pd.DataFrame()
 
 # Loop through each season and season type
-for season, season_id in generate_seasons(1996):
+for season, season_id in generate_seasons(2021):
     for season_type in ['Regular Season', 'Playoffs']:
         params = {**static_params, 'Season': season, 'SeasonType': season_type}
         response = requests.get(url, headers=headers, params=params)
